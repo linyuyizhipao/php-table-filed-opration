@@ -13,15 +13,9 @@ use Illuminate\Support\Facades\DB;
 
 class TestController
 {
-    public function showDatabses(){
-
+    public function showDatabses()
+    {
         $databaseList = DB::select("show databases");
-
-        $databaseName = "a_xy_company_yw_qcc_admin";
-        $databaseList = DB::cusConnection($databaseName)->select("show tables");
-        $table = "sys_role";
-        $databaseName = "a_xy_company_yw_qcc_admin";
-
     }
     public function showTables()
     {
