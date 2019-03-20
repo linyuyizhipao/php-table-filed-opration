@@ -14,6 +14,7 @@ Route::group([
     $router->get('/database/index', 'DatabaseController@index');
     $router->post('/database/editFieldEngineType', 'DatabaseController@editFieldEngineType');
     $router->get('/database/searchTable', 'DatabaseController@searchTable');
+    $router->get('/database/searchTable2', 'DatabaseController@searchTable2');
     $router->get('/database/updatePrimaryName', 'DatabaseController@updatePrimaryName');
     $router->get('/database/updateTableStruct', 'DatabaseController@updateTableStruct');
 

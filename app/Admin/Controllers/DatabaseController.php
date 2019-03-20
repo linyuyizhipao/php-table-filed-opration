@@ -17,7 +17,7 @@ class DatabaseController extends Controller
     const DATABASE_NAME = 'multilingual_english';
     const TABLE_NAME = 'english_translate_relavance';
     const INVLID_FIELDA_STATUS= 0; //不参与翻译的字段状态
-    const TABLE_NAME_STATUS = true;//true 覆盖，false  覆盖。如果多语库中存在 english_translate_relavance 中出现过的表，那么干掉它后  程序再维护一张我们需要的同名表
+    const TABLE_NAME_STATUS = false;//true 覆盖，false  不覆盖。如果多语库中存在 english_translate_relavance 中出现过的表，那么干掉它后  程序再维护一张我们需要的同名表
 
     public function index(Content $content,Request $request)
     {
@@ -268,7 +268,11 @@ class DatabaseController extends Controller
 
 
 
+        $tableInfo = DB::cusConnection(self::DATABASE_NAME)->select("show tables");
         $tablesNameArr=[];
+        foreach ($tableInfo as $k=>$v){
+            $tablesNameArr[] = $v->Tables_in_multilingual_english;
+        }
         foreach ($dataArrStruct as $dbName=>$tables){
             if(!is_array($tables))
                 continue;
@@ -310,5 +314,42 @@ class DatabaseController extends Controller
         }
 
 
+    }
+
+
+
+    public function searchTable2(Request $request)
+    {
+        $tt = ["不存在_updated_date_的表名"=>[],"存在_updated_date_的表名"=>[]];
+        $databaseList = DB::select("show databases");
+        foreach ($databaseList as $k=>$v){
+            $databaseName = $v->Database;
+
+            if(strstr($databaseName,"_yw_") === false){
+                continue;
+            }
+            $tablesList = DB::cusConnection($databaseName)->select("show tables");
+
+            foreach ($tablesList as $kk=>$vv){
+                $h = "Tables_in_".$databaseName;
+                $tabName = $vv->$h;
+                $fieldList = DB::cusConnection($databaseName)->select("desc {$tabName}");
+                $fgfg = true;
+                foreach ($fieldList as $kkk=>$vvv){
+                    if($vvv->Field == "updated_date" ){
+                    }else{
+                        $fgfg = false;
+                    }
+                }
+                if($fgfg === false){
+                    $tt["不存在_updated_date_的表名"][] = $databaseName."=>".$tabName."=>";
+                }else{
+                    $tt["存在_updated_date_的表名"][] = $databaseName."=>".$tabName."=>updated_date";
+                }
+
+
+            }
+        }
+        var_dump($tt);
     }
 }
